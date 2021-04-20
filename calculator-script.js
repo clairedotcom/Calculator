@@ -1,46 +1,63 @@
-function add(num1, num2){
-    return num1 + num2;
+function add(a, b){
+    return a + b;
 }
 
-function sub(num1, num2){
-    return num1 - num2;
+function sub(a, b){
+    return a - b;
 }
 
-function mult(num1, num2){
-    return num1 * num2;
+function mult(a, b){
+    return a * b;
 }
 
-function div(num1, num2){
-    return num1/num2;
+function div(a, b){
+    if (b==0){
+        alert("Try again! You can't divide by 0.")
+        return "error";
+    }
+    return a/b;
 }
 
-function operate(operation,num1,num2){
+function operate(operation, a, b){
     if (operation == "+"){
-        return add(num1, num2);
+        return add(a, b);
     }
     if (operation == "-"){
-        return sub(num1,num2);
+        return sub(a, b);
     }
     if (operation == "*"){
-        return mult(num1, num2);
+        return mult(a, b);
     }
     if (operation == "/"){
-        return div(num1, num2);
+        return div(a, b);
     }
 }
 
-//initialize variables and constants used in following functions
 let runningDisplay = "";
 let operationPressed = "";
-const changeDisplay = document.querySelector("#display");
+let storedValue = "";
+let previousDisplay = "";
 
-function storeNumKey(e){
-    let displayValue = e.target.id;
-    if (displayValue == "zero"){
-        displayValue = 0;
+const changeDisplay = document.querySelector("#display");
+const numKeys = Array.from(document.querySelectorAll(".number-btn"));
+const clearDisplay = document.querySelector("#clear");
+const operationBtn = Array.from(document.querySelectorAll(".operation-btn"));
+const equalsBtn = document.querySelector("#equals");
+
+numKeys.forEach(btn => btn.addEventListener("click", () => storeNumKey(btn.textContent)));
+clearDisplay.addEventListener("click", clear);
+operationBtn.forEach(btn => btn.addEventListener("click", () => storeOperation(btn.textContent)));
+equalsBtn.addEventListener("click", test);
+
+
+
+function storeNumKey(number){
+    if (number == "zero"){
+        number = 0;
     }
-    runningDisplay = runningDisplay + displayValue;
-    updateDisplay(runningDisplay);    
+    runningDisplay = runningDisplay + number;
+    updateDisplay(runningDisplay);
+    return runningDisplay;    
 }
 
 function updateDisplay(value){
@@ -52,40 +69,15 @@ function clear(){
     updateDisplay(runningDisplay);
 }
 
-function storeOperation(e){
-    operationPressed = e.target.id;
+function storeOperation(operation){
+    operationPressed = operation;
     previousDisplay = runningDisplay;
-    runningDisplay = "";
+    runningDisplay = ""; 
     return operationPressed;
 }
 
 function test(){
-    if (operationPressed == "add"){
-        updateDisplay(operate("+",parseInt(previousDisplay),parseInt(runningDisplay)));
-    }
-    if (operationPressed == "sub"){
-        updateDisplay(operate("-",parseInt(previousDisplay),parseInt(runningDisplay)));
-    }
-    if (operationPressed == "mult"){
-        updateDisplay(operate("*",parseInt(previousDisplay),parseInt(runningDisplay)));
-    }
-    if (operationPressed == "divide"){
-        updateDisplay(operate("/",parseInt(previousDisplay),parseInt(runningDisplay)));
-    }
+    storedValue = operate(operationPressed,parseInt(previousDisplay),parseInt(runningDisplay));
+    updateDisplay(storedValue);
 }
 
-//add event to number keys
-const numKeys = Array.from(document.querySelectorAll(".number-btn"));
-numKeys.forEach(btn => btn.addEventListener('click', storeNumKey));
-
-//add event to clear key
-const clearDisplay = document.querySelector("#clear");
-clearDisplay.addEventListener("click", clear);
-
-//add event to operation buttons
-const operationBtn = Array.from(document.querySelectorAll(".operation-btn"));
-operationBtn.forEach(btn => btn.addEventListener("click", storeOperation));
-
-//add event to equals button
-const equalsBtn = document.querySelector("#equals");
-equalsBtn.addEventListener("click", test);
