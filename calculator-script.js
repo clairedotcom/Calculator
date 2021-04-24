@@ -35,8 +35,9 @@ function operate(operation, a, b){
 
 let runningDisplay = "";
 let operationPressed = "";
-let storedValue = "";
 let previousDisplay = "";
+let resetDisplay = false;
+let finalVaule = "";
 
 const changeDisplay = document.querySelector("#display");
 const numKeys = Array.from(document.querySelectorAll(".number-btn"));
@@ -47,37 +48,59 @@ const equalsBtn = document.querySelector("#equals");
 numKeys.forEach(btn => btn.addEventListener("click", () => storeNumKey(btn.textContent)));
 clearDisplay.addEventListener("click", clear);
 operationBtn.forEach(btn => btn.addEventListener("click", () => storeOperation(btn.textContent)));
-equalsBtn.addEventListener("click", test);
-
+equalsBtn.addEventListener("click", result);
+window.addEventListener("load", clear);
 
 
 function storeNumKey(number){
     if (number == "zero"){
         number = 0;
     }
-    runningDisplay = runningDisplay + number;
-    updateDisplay(runningDisplay);
-    return runningDisplay;    
+
+    if (resetDisplay){
+        changeDisplay.textContent = "";
+        resetDisplay = false;
+    }
+   
+    if (number == "." && changeDisplay.textContent.includes(".")){
+        return
+    }
+
+    if (changeDisplay.textContent.toString().length > 8){
+        return
+    }
+    changeDisplay.textContent += number;
 }
 
 function updateDisplay(value){
-    changeDisplay.textContent = value;
+    changeDisplay.textContent = value
 }
 
 function clear(){
     runningDisplay = "";
+    previousDisplay = "";
+    operationPressed = "";
+    resetDisplay = false;
     updateDisplay(runningDisplay);
 }
 
 function storeOperation(operation){
+    if (operationPressed !== ""){
+        result();
+    }
     operationPressed = operation;
-    previousDisplay = runningDisplay;
-    runningDisplay = ""; 
+    previousDisplay = changeDisplay.textContent;
+    resetDisplay = true;
     return operationPressed;
 }
 
-function test(){
-    storedValue = operate(operationPressed,parseInt(previousDisplay),parseInt(runningDisplay));
-    updateDisplay(storedValue);
+function result(){
+    if (operationPressed == ""){
+        return
+    }
+    runningDisplay = changeDisplay.textContent;
+    finalValue = operate(operationPressed,parseFloat(previousDisplay),parseFloat(runningDisplay));
+    updateDisplay(finalValue.toString().slice(0,9));
+    operationPressed = "";
 }
 
